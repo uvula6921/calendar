@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 // 겉 껍데기 담당
 /**
- * props 
+ * props
  *  - flex_direction : string ㅣ row = 가로로 쌓기, column = 세로로 쌓기 (만약 값 없다면?->가로가 기본이 됩니다.)
  *  - border : string | border 속성 넣기(ex: 1px solid #dddddd)
  *  - bg: string | #aaaaaa = # + 헥사코드 (ex: #ffffff)
@@ -28,25 +28,21 @@ const Grid = styled.div`
   justify-content: ${(props) =>
     props.justify_contents ? props.justify_contents : "flex-start"};
   ${(props) => (props.margin ? `margin: ${props.margin};` : "")}
-
   ${(props) => (props.is_root ? `width: 100vw; height: 100vh;` : "")}
+  ${(props) => (props.font_size ? `font-size: ${props.font_size}em` : "")}
 `;
-
 
 // 버튼
 /**
- * props 
+ * props
  *  - flex_direction : string ㅣ row = 가로로 쌓기, column = 세로로 쌓기 (만약 값 없다면?->가로가 기본이 됩니다.)
  *  - bg : boolean | true = 배경색 있는 버전, false = 배경색 없는 버전
  */
 const Button = styled.button`
-    padding: 8px 16px;
-    border: none;
-    ${(props) => props.bg && "background-color: #453214; color: #fff;"}
-    
-
+  padding: 8px 16px;
+  border: none;
+  ${(props) => props.bg && "background-color: #453214; color: #fff;"}
 `;
-
 
 // text 담당
 /**
@@ -55,30 +51,26 @@ const Button = styled.button`
  *  - bold : boolean | true면 볼드 줌, false면 볼드 안줌
  */
 const Text = (props) => {
-    if(props.type === "title"){
-        return <H1>{props.children}</H1>;
-    }
+  if (props.type === "title") {
+    return <H1>{props.children}</H1>;
+  }
 
-    if(props.type === "contents"){
-        return <P>{props.children}</P>;
-    }
+  if (props.type === "contents") {
+    return <P>{props.children}</P>;
+  }
 
-    if(props.type === "label"){
-        return <Span>{props.children}</Span>;;
-    }
-   
-    return (
-      <React.Fragment>
-        {props.children}
-      </React.Fragment>
-    );
-}
+  if (props.type === "label") {
+    return <Span>{props.children}</Span>;
+  }
+
+  return <React.Fragment>{props.children}</React.Fragment>;
+};
 
 const H1 = styled.h1`
-    margin: 0px;
-    font-size: 1.5em;
-    text-align: center;
-    ${(props)=> props.bold? `font-weight: bold;` : ''}
+  margin: 0px;
+  font-size: 1.5em;
+  text-align: center;
+  ${(props) => (props.bold ? `font-weight: bold;` : "")}
 `;
 
 const P = styled.p`
@@ -89,9 +81,7 @@ const P = styled.p`
 const Span = styled.span`
   margin: 0px;
   font-size: 0.4em;
-  color: #888;
+  color: #101820;
 `;
 
-export {
-    Grid, Button, Text,
-};
+export { Grid, Button, Text };

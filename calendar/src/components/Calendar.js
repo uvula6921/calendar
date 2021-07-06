@@ -13,7 +13,7 @@ const Calendar = (props) => {
   const { today, todo_list, _changeMonth } = props;
 
   // 넘어온 데이터를 확인하자!
-  console.log(todo_list);
+  // console.log(todo_list);
 
   // 이번달의 시작 주, 끝 주를 구합니다.
   const start_week = moment(today).startOf("month").week();
@@ -64,7 +64,12 @@ const Calendar = (props) => {
             // console.log(_l);
             // 일정을 뿌려줘요!
             return (
-              <Grid bg="orange" height="auto" margin= "1px 0px" key={`${_l.datetime}_${_l.todo_id}`}>
+              <Grid
+                bg="#f2aa4c"
+                height="auto"
+                margin="1px 0px"
+                key={`${_l.datetime}_${_l.todo_id}`}
+              >
                 <Text type="label">{_l.contents}</Text>
               </Grid>
             );
@@ -82,10 +87,7 @@ const Calendar = (props) => {
                 <Text type="label">{_day.format("DD")}일</Text>
               )}
 
-              {
-                // 일정도 보여줍시다! :) null이 아닐때만 보여줘요!
-                _list && list
-              }
+              {_list && list}
             </Grid>
           );
         })}
@@ -93,7 +95,6 @@ const Calendar = (props) => {
     );
   });
 
-  // 요일이 나올 배열도 만들어주기!
   const dow = ["일", "월", "화", "수", "목", "금", "토"].map((_d) => {
     return (
       <Grid
@@ -114,18 +115,28 @@ const Calendar = (props) => {
   return (
     <Grid flex_direction="column" width="80vw" height="80vh" margin="auto">
       <Grid justify_contents="space-between">
-        <Button onClick={() => {
-          // 자식 컴포넌트에서 부모 컴포넌트의 state를 조절하는 건 좋은 방법은 아닙니다.
-          // 하지만 아직 뷰만들기 단계니까 맘껏 조절해볼게요 :)
-          // 이런걸 양방향 바인딩이라고 불러요 (소근 /// 양방향 바인딩.. 찾아보실거죠? 믿씁니다!)
-          _changeMonth(moment(today).clone().subtract(1, "month"));
-          }}>이전</Button>
+        <Button
+          onClick={() => {
+            // 자식 컴포넌트에서 부모 컴포넌트의 state를 조절하는 건 좋은 방법은 아닙니다.
+            // 하지만 아직 뷰만들기 단계니까 맘껏 조절해볼게요 :)
+            // 이런걸 양방향 바인딩이라고 불러요 (소근 /// 양방향 바인딩.. 찾아보실거죠? 믿씁니다!)
+            // _changeMonth(moment(today).clone().subtract(1, "month"));
+          }}
+        >
+          이전
+        </Button>
         <Text type="title">{moment(today).format("MM")}월</Text>
-        <Button onClick={() => {
-          _changeMonth(moment(today).clone().add(1, "month"));
-        }}>이후</Button>
+        <Button
+          onClick={() => {
+            // _changeMonth(moment(today).clone().add(1, "month"));
+          }}
+        >
+          이후
+        </Button>
       </Grid>
-      <Grid height="auto">{dow}</Grid>
+      <Grid height="auto" font_size="4">
+        {dow}
+      </Grid>
       {week_arr}
     </Grid>
   );
@@ -134,7 +145,7 @@ const Calendar = (props) => {
 // 기본적으로 꼭 필요한 props를 미리 정해줍시다!
 Calendar.defaultProps = {
   today: moment(),
-  _changeMonth: () => {}
+  _changeMonth: () => {},
 };
 
 export default Calendar;
