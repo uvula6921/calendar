@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 // 스타일을 이렇게 파일 하나에 몰아두면 편히 관리할 수 있어요! :)
 
@@ -42,6 +42,19 @@ const Button = styled.button`
   padding: 8px 16px;
   border: none;
   ${(props) => props.bg && "background-color: #453214; color: #fff;"}
+  ${(props) => props.is_float && "position: fixed;"}
+  bottom: ${(props) => props.bottom || "50px"};
+  right: ${(props) => props.right || "50px"};
+  margin: ${(props) => props.margin || "0px"};
+`;
+
+// Input
+/**
+ * props
+ *  - type : string | text
+ */
+const Input = styled.input`
+  ${(props) => props.width && `width: ${props.width};`}
 `;
 
 // text 담당
@@ -52,15 +65,15 @@ const Button = styled.button`
  */
 const Text = (props) => {
   if (props.type === "title") {
-    return <H1>{props.children}</H1>;
+    return <H1 {...props}>{props.children}</H1>;
   }
 
   if (props.type === "contents") {
-    return <P>{props.children}</P>;
+    return <P {...props}>{props.children}</P>;
   }
 
   if (props.type === "label") {
-    return <Span>{props.children}</Span>;
+    return <Span {...props}>{props.children}</Span>;
   }
 
   return <React.Fragment>{props.children}</React.Fragment>;
@@ -70,7 +83,12 @@ const H1 = styled.h1`
   margin: 0px;
   font-size: 1.5em;
   text-align: center;
-  ${(props) => (props.bold ? `font-weight: bold;` : "")}
+  ${(props) =>
+    props.bold
+      ? css`
+          font-weight: bold;
+        `
+      : ""}
 `;
 
 const P = styled.p`
@@ -79,9 +97,10 @@ const P = styled.p`
 `;
 
 const Span = styled.span`
-  margin: 0px;
-  font-size: 0.4em;
+  margin: ${(props) => props.margin || "0px"};
+  // 이 표현이 아주 깔끔하고 좋은것 같다!
+  font-size: ${(props) => props.font_size || "0.4em"};
   color: #101820;
 `;
 
-export { Grid, Button, Text };
+export { Grid, Button, Text, Input };

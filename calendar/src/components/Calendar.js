@@ -1,6 +1,8 @@
 import React from "react";
 import { Grid, Button, Text } from "./Styles";
+import Detail from "./Detail";
 import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
 
 /**
  * 달력 만들기 순서
@@ -10,7 +12,21 @@ import moment from "moment";
  *  - +) 일정도 같이 넣어주면 good!
  */
 const Calendar = (props) => {
-  const { today, todo_list, _changeMonth } = props;
+  const { today, todo_list, _changeMonth, schedule_toggle } = props;
+  const [open, setOpen] = React.useState(false);
+  const [modal_list, setModalList] = React.useState();
+
+  const handleOpen = (date, id) => {
+    setOpen(true);
+    const _modal_list = todo_list[date].filter((l) => {
+      return l.id === id;
+    });
+    setModalList(_modal_list);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   // 넘어온 데이터를 확인하자!
   // console.log(todo_list);
@@ -19,7 +35,7 @@ const Calendar = (props) => {
   const start_week = moment(today).startOf("month").week();
   const end_week = moment(today).endOf("month").week();
 
-  // 달력에 넣을 주수 배열 길이를 구합니다. (*주의* +1 해야함(7~11주는 총 몇 주인지 생각해보세요! :)!))
+  // 달력에 넣을 주수 배열 길이를 구합니다.
   // 마지막 주가 다음 해 1주일 수 있어요. (시작 주보다 끝 주가 숫자가 작을 수 있다!)
   const week_num =
     (start_week > end_week ? 53 - start_week : end_week - start_week) + 1;
@@ -59,21 +75,40 @@ const Calendar = (props) => {
           const _list =
             list_index !== -1 ? todo_list[_day.format("YYYY-MM-DD")] : [];
 
-          const list = _list.map((_l, idx) => {
+          let sorted_list = _list.slice(0, _list.length);
+          // 시간순 오름차순 정렬하기.
+          sorted_list.sort(function (a, b) {
+            return (
+              moment(a["datetime"], "YYYY-MM-DD HH:mm") -
+              moment(b["datetime"], "YYYY-MM-DD HH:mm")
+            );
+          });
+
+          // 완료된 일정 필터링 하기.
+          if (schedule_toggle) {
+            sorted_list = sorted_list.filter((l, idx) => {
+              return l.completed === true;
+            });
+          }
+
+          const list = sorted_list.map((_l, idx) => {
             // 데이터 확인하기!
             // console.log(_l);
             // 일정을 뿌려줘요!
+
             return (
               <Grid
-                bg="#f2aa4c"
+                bg={_l.completed ? "#48cae4;" : "#f2aa4c;"}
                 height="auto"
                 margin="1px 0px"
-                key={`${_l.datetime}_${_l.todo_id}`}
+                key={`${_l.datetime}_${_l.id}`}
+                onClick={() => handleOpen(_day.format("YYYY-MM-DD"), _l.id)}
               >
                 <Text type="label">{_l.contents}</Text>
               </Grid>
             );
           });
+
           return (
             <Grid
               margin="0px 2px"
@@ -113,32 +148,38 @@ const Calendar = (props) => {
   });
 
   return (
-    <Grid flex_direction="column" width="80vw" height="80vh" margin="auto">
-      <Grid justify_contents="space-between">
-        <Button
-          onClick={() => {
-            // 자식 컴포넌트에서 부모 컴포넌트의 state를 조절하는 건 좋은 방법은 아닙니다.
-            // 하지만 아직 뷰만들기 단계니까 맘껏 조절해볼게요 :)
-            // 이런걸 양방향 바인딩이라고 불러요 (소근 /// 양방향 바인딩.. 찾아보실거죠? 믿씁니다!)
-            // _changeMonth(moment(today).clone().subtract(1, "month"));
-          }}
-        >
-          이전
-        </Button>
-        <Text type="title">{moment(today).format("MM")}월</Text>
-        <Button
-          onClick={() => {
-            // _changeMonth(moment(today).clone().add(1, "month"));
-          }}
-        >
-          이후
-        </Button>
+    <>
+      <Grid flex_direction="column" width="80vw" height="80vh" margin="auto">
+        <Grid justify_contents="space-between">
+          <Button
+            onClick={() => {
+              _changeMonth(-1);
+            }}
+          >
+            이전
+          </Button>
+          <Text type="title">{moment(today).format("MM")}월</Text>
+          <Button
+            onClick={() => {
+              _changeMonth(1);
+            }}
+          >
+            이후
+          </Button>
+        </Grid>
+        <Grid height="auto" font_size="4">
+          {dow}
+        </Grid>
+        {week_arr}
       </Grid>
-      <Grid height="auto" font_size="4">
-        {dow}
-      </Grid>
-      {week_arr}
-    </Grid>
+      {modal_list && (
+        <Detail
+          handleClose={handleClose}
+          open={open}
+          modal_list={modal_list[0]}
+        ></Detail>
+      )}
+    </>
   );
 };
 
@@ -146,6 +187,7 @@ const Calendar = (props) => {
 Calendar.defaultProps = {
   today: moment(),
   _changeMonth: () => {},
+  todo_list: {},
 };
 
 export default Calendar;
